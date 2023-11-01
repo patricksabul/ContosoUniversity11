@@ -1,32 +1,60 @@
 ﻿@model IEnumerable<ContosoUniversity.Models.Course>
+
 @{
-    ViewData["Title"] = "Course Index";
+    ViewBag.Title = "Courses";
 }
 
-<h2>Course Index</h2>
+<h2>Courses</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm())
+{
+    <p>
+
+    </p>
+}
 
 <table class="table">
-    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CourseID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Credits)
+        </th>
+        <th>
+            Department
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
-            <th>Course ID</th>
-            <th>Title</th>
-            <th>Credits</th>
-            <th>Actions</th>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Credits)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CourseID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CourseID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CourseID })
+            </td>
         </tr>
-    </thead>
-    <tbody>
-        @foreach (var course in Model)
-        {
-            <tr>
-                <td>@course.CourseID</td>
-                <td>@course.Title</td>
-                <td>@course.Credits</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@course.CourseID">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@course.CourseID">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@course.CourseID">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+    }
+
 </table>
