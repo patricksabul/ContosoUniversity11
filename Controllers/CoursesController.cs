@@ -4,43 +4,47 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace ContosoUniversity.Controllers
 {
     public class CoursesController : Controller
     {
         private readonly SchoolContext _context;
+
         public CoursesController(SchoolContext context)
         {
             _context = context;
         }
+
         public async Task<IActionResult> Index()
         {
             return View(await _context.Courses
-            .Include(c => c.Department)
-            .ToListAsync());
+                .Include(c => c.Department)
+                .ToListAsync());
         }
 
         public async Task<IActionResult> Create()
         {
-            ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentID", "Name");
+            ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "Name");
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("CourseID", "Title", "Credits", "DepartmentID")] Course course)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("CourseID,Title,Credits,DepartmentID")] Course course)
         {
-            ModelState.Remove("Courses");
-            ModelState.Remove("Adminstrator");
             if (ModelState.IsValid)
             {
                 _context.Add(course);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "Name", course.DepartmentID);
-            return RedirectToAction(nameof(Index));
 
+            ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "Name", course.DepartmentID);
+            return View(course);
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
